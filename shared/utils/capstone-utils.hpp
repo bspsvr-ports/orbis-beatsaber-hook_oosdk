@@ -26,17 +26,8 @@ struct AddrSearchPair {
 };
 
 auto find_through_hooks(void const* hook, uint32_t initialSearchSize, auto&& func) {
-    // First, check to see if we are hooked.
     auto const& logger = il2cpp_utils::Logger;
-    logger.debug("Finding through potential hook: {} and size: {}", fmt::ptr(hook), initialSearchSize);
-    auto hooks = HookTracker::GetHooks(hook);
-    if (!hooks.empty()) {
-        uint32_t const* addr = hooks.front().original_data.data();
-        uint32_t size = hooks.front().original_data.size() * sizeof(uint32_t);
-        logger.debug("Hook found ({})! Original data: {} with size: {}", hooks.front().name, fmt::ptr(addr), size);
-        return func(cs::AddrSearchPair(addr, size), cs::AddrSearchPair(reinterpret_cast<uint32_t const*>(hook), initialSearchSize));
-    }
-    logger.debug("No hook found! Searching: {}, {}", fmt::ptr(hook), initialSearchSize);
+    logger.debug("Searching: {}, {}", fmt::ptr(hook), initialSearchSize);
     return func(cs::AddrSearchPair(reinterpret_cast<uint32_t const*>(hook), initialSearchSize));
 }
 
